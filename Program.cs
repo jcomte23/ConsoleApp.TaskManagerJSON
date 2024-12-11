@@ -207,6 +207,31 @@ do
                     continue;
             }
             break;
+        case "5":
+            Console.Clear();
+            Console.WriteLine("Are you sure you want to exit?");
+            Console.WriteLine("[1] Yes or [0] No");
+            Console.Write("=> ");
+            var exitConfirm = Console.ReadLine();
+
+            switch (exitConfirm)
+            {
+                case "1":
+                    Console.WriteLine("Exiting the program. Goodbye!");
+                    flag = false; // Termina el bucle principal
+                    break;
+                case "0":
+                    Console.WriteLine("Operation cancelled.");
+                    Console.WriteLine("Click to continue ...");
+                    Console.ReadLine();
+                    break;
+                default:
+                    Console.WriteLine("Invalid option. Returning to menu.");
+                    Console.WriteLine("Click to continue ...");
+                    Console.ReadLine();
+                    break;
+            }
+            break;
         default:
             break;
     }
