@@ -1,5 +1,5 @@
 ﻿namespace ConsoleApp.TaskManagerJSON.Models;
-internal class Task(string name, string description)
+internal class PersonalTask(string name, string description)
 {
     public Guid Id { get; } = Guid.NewGuid();
     public string Name { get; set; } = name;
