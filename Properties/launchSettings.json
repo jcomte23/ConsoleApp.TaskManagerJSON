@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "ConsoleApp.TaskManagerJSON": {
+      "commandName": "Project",
+      "workingDirectory": "$(ProjectDir)"
+    }
+  }
+}
