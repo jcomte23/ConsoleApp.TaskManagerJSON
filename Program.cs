@@ -1,13 +1,18 @@
 ﻿using ConsoleApp.TaskManagerJSON.Models;
 using ConsoleApp.TaskManagerJSON.Services;
-using System.Threading.Tasks;
+using Newtonsoft.Json;
 
-var tasks = new List<PersonalTask>
+bool doesDirectoryExist = Directory.Exists("Data");
+
+if (!doesDirectoryExist)
 {
-    new PersonalTask("Estudiar C#", "Estudiar las colecciones en C#"),
-    new PersonalTask("Hacer ejercicio", "Ir al gimnasio por 1 hora"),
-    new PersonalTask("Leer libro", "Leer 20 páginas de un libro técnico")
-};
+    Directory.CreateDirectory($"Data");
+    string workDirectory = Path.Combine(Directory.GetCurrentDirectory(), "Data");
+    File.WriteAllText(Path.Combine(workDirectory, "tasks.json"), String.Empty);
+}
+
+var dataFromJson = File.ReadAllText($"Data{Path.DirectorySeparatorChar}tasks.json");
+var tasks = JsonConvert.DeserializeObject<List<PersonalTask>>(dataFromJson);
 
 var flag = true;
 
@@ -31,6 +36,44 @@ do
             TaskDisplayService.DisplayTasksInTable(tasks);
             Console.WriteLine("Click to continue ...");
             Console.ReadKey();
+            break;
+        case "2":
+            Console.Clear();
+            Console.WriteLine("Enter the task name:");
+            Console.Write("=> ");
+            string taskName = Console.ReadLine() ?? string.Empty;
+
+            if (string.IsNullOrWhiteSpace(taskName))
+            {
+                Console.WriteLine("Task name cannot be empty.");
+                Console.WriteLine("Click to continue ...");
+                Console.ReadLine();
+                continue;
+            }
+
+            Console.WriteLine("Enter the task description:");
+            Console.Write("=> ");
+            string taskDescription = Console.ReadLine() ?? string.Empty;
+
+            if (string.IsNullOrWhiteSpace(taskDescription))
+            {
+                Console.WriteLine("Task description cannot be empty.");
+                Console.WriteLine("Click to continue ...");
+                Console.ReadLine();
+                continue;
+            }
+
+
+            var newTask = new PersonalTask(taskName, taskDescription);
+
+            tasks.Add(newTask);
+
+            string addTaskIntoJson = JsonConvert.SerializeObject(tasks, Formatting.Indented);
+            File.WriteAllText($"Data{Path.DirectorySeparatorChar}tasks.json", addTaskIntoJson);
+
+            Console.WriteLine("Task added successfully.");
+            Console.WriteLine("Click to continue ...");
+            Console.ReadLine();
             break;
         case "4":
             Console.Clear();
@@ -84,6 +127,10 @@ do
             {
                 case "1":
                     Console.Clear();
+                    tasks.Remove(task);
+                    string updatedJson = JsonConvert.SerializeObject(tasks, Formatting.Indented);
+                    File.WriteAllText($"Data{Path.DirectorySeparatorChar}tasks.json", updatedJson);
+
                     Console.WriteLine("Task deleted");
                     Console.WriteLine("Click to continue ...");
                     Console.ReadLine();
@@ -107,6 +154,3 @@ do
     }
 }
 while (flag == true);
-
-
-
