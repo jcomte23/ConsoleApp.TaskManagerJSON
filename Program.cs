@@ -12,20 +12,21 @@ if (!doesDirectoryExist)
 }
 
 var dataFromJson = File.ReadAllText($"Data{Path.DirectorySeparatorChar}tasks.json");
-var tasks = JsonConvert.DeserializeObject<List<PersonalTask>>(dataFromJson);
-
+var tasks = JsonConvert.DeserializeObject<List<PersonalTask>>(dataFromJson) ?? [];
 var flag = true;
 
 do
 {
     Console.Clear();
-    Console.WriteLine("####################");
+    Console.WriteLine("##########################");
+    Console.WriteLine("       Task Manager       ");
+    Console.WriteLine("##########################");
     Console.WriteLine("1. List all tasks");
     Console.WriteLine("2. Add new task");
     Console.WriteLine("3. Mark task as completed");
     Console.WriteLine("4. Delete task");
     Console.WriteLine("5. Exit");
-    Console.WriteLine("####################");
+    Console.WriteLine("##########################");
 
     var option = Console.ReadLine();
 
@@ -65,7 +66,6 @@ do
 
 
             var newTask = new PersonalTask(taskName, taskDescription);
-
             tasks.Add(newTask);
 
             string addTaskIntoJson = JsonConvert.SerializeObject(tasks, Formatting.Indented);
@@ -104,7 +104,6 @@ do
                     continue;
                 }
 
-                // Buscar la tarea
                 var taskToComplete = TaskFetcherService.GetTaskById(tasks, id);
 
                 if (taskToComplete.Completed)
@@ -115,10 +114,8 @@ do
                     continue;
                 }
 
-                // Marcar como completada
                 taskToComplete.Completed = true;
 
-                // Actualizar el archivo JSON
                 string updatedJson = JsonConvert.SerializeObject(tasks, Formatting.Indented);
                 File.WriteAllText($"Data{Path.DirectorySeparatorChar}tasks.json", updatedJson);
 
