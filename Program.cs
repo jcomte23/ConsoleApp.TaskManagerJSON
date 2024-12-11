@@ -75,6 +75,64 @@ do
             Console.WriteLine("Click to continue ...");
             Console.ReadLine();
             break;
+        case "3":
+            Console.Clear();
+            TaskDisplayService.DisplayTasksInTable(tasks);
+            Console.WriteLine();
+            Console.WriteLine("Copy and paste the Id of the task you want to mark as completed");
+            Console.Write("=> ");
+            string taskIdToComplete = Console.ReadLine() ?? string.Empty;
+
+            if (string.IsNullOrWhiteSpace(taskIdToComplete))
+            {
+                Console.WriteLine("Invalid ID.");
+                Console.WriteLine("Click to continue ...");
+                Console.ReadLine();
+                continue;
+            }
+
+            try
+            {
+                var id = Guid.Parse(taskIdToComplete);
+                bool existsTask = TaskChecker.TaskExists(tasks, id);
+
+                if (!existsTask)
+                {
+                    Console.WriteLine("The task was not found.");
+                    Console.WriteLine("Click to continue ...");
+                    Console.ReadLine();
+                    continue;
+                }
+
+                // Buscar la tarea
+                var taskToComplete = TaskFetcherService.GetTaskById(tasks, id);
+
+                if (taskToComplete.Completed)
+                {
+                    Console.WriteLine("This task is already marked as completed.");
+                    Console.WriteLine("Click to continue ...");
+                    Console.ReadLine();
+                    continue;
+                }
+
+                // Marcar como completada
+                taskToComplete.Completed = true;
+
+                // Actualizar el archivo JSON
+                string updatedJson = JsonConvert.SerializeObject(tasks, Formatting.Indented);
+                File.WriteAllText($"Data{Path.DirectorySeparatorChar}tasks.json", updatedJson);
+
+                Console.WriteLine("Task marked as completed successfully.");
+                Console.WriteLine("Click to continue ...");
+                Console.ReadLine();
+            }
+            catch (FormatException)
+            {
+                Console.WriteLine("Invalid ID format.");
+                Console.WriteLine("Click to continue ...");
+                Console.ReadLine();
+            }
+            break;
         case "4":
             Console.Clear();
             TaskDisplayService.DisplayTasksInTable(tasks);
